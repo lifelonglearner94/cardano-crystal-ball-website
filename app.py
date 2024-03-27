@@ -36,7 +36,7 @@ def creating_df(start, values=None):
 @st.cache_data
 def api_request():
 
-    url = 'https://cardanocrystalball-lu25urx5bq-ey.a.run.app' # gcloud run deploy --image $GCP_REGION-docker.pkg.dev/$GCP_PROJECT/taxifare/$GAR_IMAGE:prod --memory $GAR_MEMORY --region $GCP_REGION --env-vars-file .env.yaml
+    url = 'https://cardanocrystalball-lu25urx5bq-ey.a.run.app/predict' # gcloud run deploy --image $GCP_REGION-docker.pkg.dev/$GCP_PROJECT/taxifare/$GAR_IMAGE:prod --memory $GAR_MEMORY --region $GCP_REGION --env-vars-file .env.yaml
 
     #params = {"current_date_and_time": 1}
 
