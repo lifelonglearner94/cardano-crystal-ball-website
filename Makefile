@@ -38,3 +38,6 @@ clean:
 	@rm -fr *.dist-info
 	@rm -fr *.egg-info
 	-@rm model.joblib
+
+debug_streamlit:
+	python cardano_crystal_ball/interface/main.py

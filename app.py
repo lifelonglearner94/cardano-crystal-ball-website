@@ -3,7 +3,7 @@ import requests
 import numpy as np
 import pandas as pd
 import plotly.graph_objs as go
-
+import seaborn as sns
 def set_background(image_url):
     """
     Function to set background image using custom CSS
@@ -19,6 +19,8 @@ def set_background(image_url):
          """,
          unsafe_allow_html=True
      )
+
+
 
 @st.cache_data
 def creating_df(start, values=None):
@@ -81,15 +83,55 @@ layout = go.Layout(title='Cardanoprice & Forecast',
                    xaxis=dict(title='Date & Time in UTC', showgrid=True),
                    yaxis=dict(title='Cardanoprice in USD', showgrid=True))
 
+
 fig = go.Figure(data=[trace1, trace2], layout=layout)
 
 #st.plotly_chart(fig, theme=None, use_container_width=True)
 
+
+@st.cache_data
+def min_max_table(yesterdays_rate_list, prediction_list ):
+
+    min_yesterday_rate = min(yesterdays_rate_list)
+    max_yesterday_rate = max(yesterdays_rate_list)
+
+    min_prediction_list = min(prediction_list)
+    max_prediction_list = max(prediction_list)
+
+    data =[[min_yesterday_rate, max_yesterday_rate], [min_prediction_list,max_prediction_list]]
+    df = pd.DataFrame(data, index = ['last 24h', 'next 24h'], columns = ['24h Low', '24h High'])
+    return df
+
+df = min_max_table(yesterdays_rate, prediction)
+cm = sns.color_palette("coolwarm_r", as_cmap=True)
+
+
+
+def highlight_low_high(val):
+    for row in df.iterrows():
+        if val == row[1].min():
+            return 'color: red'
+        elif val == row[1].max():
+            return 'color: green'
+    return ''
+
+
+# Apply styling
+df_style = df.style.applymap(highlight_low_high)
+
+# Apply conditional formatting to DataFrame
 if button1:
 
     st.plotly_chart(fig, theme=None, use_container_width=True)
 
     if upwards_trend:
-        st.markdown(f"### The price trend is upwards 📈")
+        st.markdown(f"### The price is predicted to  <span style='color:green'>rise </span> 📈", unsafe_allow_html=True)
     else:
-        st.markdown(f"### The price trend is downwards 📉")
+        st.markdown(f"### The price trend is <span style='color:red'>fall </span> 📉", unsafe_allow_html=True)
+    # if upwards_trend:
+    #     st.markdown(f"### The price trend is upwards 📈")
+    # else:
+    #     st.markdown(f"### The price trend is downwards 📉")
+
+    # Display the styled DataFrame
+    st.write(df_style, unsafe_allow_html=True)
