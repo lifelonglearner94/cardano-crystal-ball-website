@@ -20,8 +20,6 @@ def set_background(image_url):
          unsafe_allow_html=True
      )
 
-
-
 @st.cache_data(ttl=600)
 def creating_df(start, values=None):
     date_range = pd.date_range(start=start, periods=24, freq='H')
