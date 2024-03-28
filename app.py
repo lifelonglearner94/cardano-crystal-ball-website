@@ -22,7 +22,7 @@ def set_background(image_url):
 
 
 
-@st.cache_data
+@st.cache_data(ttl=600)
 def creating_df(start, values=None):
     date_range = pd.date_range(start=start, periods=24, freq='H')
     if values == None:
@@ -35,7 +35,7 @@ def creating_df(start, values=None):
 
     return df
 
-@st.cache_data
+@st.cache_data(ttl=600)
 def api_request():
 
     url = 'https://cardanocrystalball-lu25urx5bq-ey.a.run.app/predict' # gcloud run deploy --image $GCP_REGION-docker.pkg.dev/$GCP_PROJECT/taxifare/$GAR_IMAGE:prod --memory $GAR_MEMORY --region $GCP_REGION --env-vars-file .env.yaml
@@ -107,7 +107,7 @@ fig = go.Figure(data=[trace1, trace2], layout=layout)
 #st.plotly_chart(fig, theme=None, use_container_width=True)
 
 
-@st.cache_data
+@st.cache_data(ttl=600)
 def min_max_table(yesterdays_rate_list, prediction_list ):
 
     min_yesterday_rate = min(yesterdays_rate_list)
