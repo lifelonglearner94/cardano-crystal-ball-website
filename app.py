@@ -156,3 +156,5 @@ if button1:
 
     # Display the styled DataFrame
     st.write(df_style, unsafe_allow_html=True)
+
+st.markdown(f"### DISCLAIMER: For educational and informational purposes only!")
