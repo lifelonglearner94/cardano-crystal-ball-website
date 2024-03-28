@@ -47,21 +47,29 @@ def api_request():
     except:
         return 0, 0, 0, 0, False
 
-    return response["prediction"], response["start_time"], response["yesterdays_rate"], response["yesterdays_start_time"], response["upwards_trend"]
+    return response["prediction"],\
+        response["start_time"],\
+        response["yesterdays_rate"],\
+        response["yesterdays_start_time"],\
+        response["upwards_trend"]
 
 
 
-#set_background("https://images.freeimages.com/images/large-previews/1ca/green-glass-sphere-1196476.jpg")
+# set_background("https://images.freeimages.com/images/large-previews/1ca/green-glass-sphere-1196476.jpg")
 
 
 st.title('Cardano Crystal Ball 🔮')
 
 st.markdown(f"\n")
 
-button1 = st.button("Predict prices of tomorrow")
+
+
+button1 = st.button("Predict prices for the next 24h",
+                    help="Click to predict"
+                    )
+
 
 st.markdown(f"\n")
-
 
 
 #ADD GRIDLINES
@@ -76,12 +84,22 @@ df2 = creating_df(start_time, prediction)
 merged_df = pd.concat([df1, df2], axis=1)
 merged_df.columns = ['Cardano_rate_y', 'Cardano_rate_t']
 
-trace1 = go.Scatter(x=merged_df.index, y=merged_df['Cardano_rate_y'], mode='lines', name='last 24h', line=dict(color='blue'))
-trace2 = go.Scatter(x=merged_df.index, y=merged_df['Cardano_rate_t'], mode='lines', name='next 24h', line=dict(color='red'))
+trace1 = go.Scatter(x=merged_df.index,
+                    y=merged_df['Cardano_rate_y'],
+                    mode='lines+markers',
+                    name='last 24h',
+                    line=dict(color='blue')
+                    )
+trace2 = go.Scatter(x=merged_df.index,
+                    y=merged_df['Cardano_rate_t'],
+                    mode='lines+markers',
+                    name='next 24h',
+                    line=dict(color='red')
+                    )
 
-layout = go.Layout(title='Cardanoprice & Forecast',
+layout = go.Layout(title='Cardano Price & Forecast',
                    xaxis=dict(title='Date & Time in UTC', showgrid=True),
-                   yaxis=dict(title='Cardanoprice in USD', showgrid=True))
+                   yaxis=dict(title='Cardano Price in USD $', showgrid=True))
 
 
 fig = go.Figure(data=[trace1, trace2], layout=layout)
@@ -98,8 +116,14 @@ def min_max_table(yesterdays_rate_list, prediction_list ):
     min_prediction_list = min(prediction_list)
     max_prediction_list = max(prediction_list)
 
-    data =[[min_yesterday_rate, max_yesterday_rate], [min_prediction_list,max_prediction_list]]
-    df = pd.DataFrame(data, index = ['last 24h', 'next 24h'], columns = ['24h Low', '24h High'])
+    data =[[min_yesterday_rate, max_yesterday_rate],
+           [min_prediction_list,max_prediction_list]
+            ]
+    df = pd.DataFrame(data,
+                      index = ['last 24h', 'next 24h'],
+                      columns = ['24h Low', '24h High']
+                      )
+
     return df
 
 df = min_max_table(yesterdays_rate, prediction)
@@ -122,16 +146,15 @@ df_style = df.style.applymap(highlight_low_high)
 # Apply conditional formatting to DataFrame
 if button1:
 
-    st.plotly_chart(fig, theme=None, use_container_width=True)
+    st.plotly_chart(fig, theme=None,
+                    use_container_width=True,
+                     template="plotly_dark" )
 
     if upwards_trend:
         st.markdown(f"### The price is predicted to  <span style='color:green'>rise </span> 📈", unsafe_allow_html=True)
     else:
-        st.markdown(f"### The price trend is <span style='color:red'>fall </span> 📉", unsafe_allow_html=True)
-    # if upwards_trend:
-    #     st.markdown(f"### The price trend is upwards 📈")
-    # else:
-    #     st.markdown(f"### The price trend is downwards 📉")
+        st.markdown(f"### The price is predicted to  <span style='color:red'>fall </span> 📉", unsafe_allow_html=True)
+
 
     # Display the styled DataFrame
     st.write(df_style, unsafe_allow_html=True)
